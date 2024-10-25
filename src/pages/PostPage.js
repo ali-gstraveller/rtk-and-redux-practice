@@ -1,56 +1,55 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import {useParams} from 'react-router-dom'
 import { Post } from '../components/Post';
-import { fetchPost } from '../actions/postActions' ;
 import { Comment } from '../components/Comment'
-import { fetchComments } from '../actions/commentsActions';
 import { useDispatch, useSelector } from 'react-redux'
-import { postSelector } from '../slices/post'
+import { postSelector,fetchPost } from '../slices/post';
+import { commentsSelector,fetchComments } from '../slices/comments';
 
 
 
 const PostPage = () => {
   
   const dispatch = useDispatch() ;
-  const { post, loading : postLoading , hasErrors : postHasErrors } = useSelector(postSelector) ;
-  const { id } = useParams() ;
-  
+  const   { post, loading:postLoading, hasErrors:posthasErrors }= useSelector(postSelector) ;
+  const   { comments, loading:commentsLoading   , hasErrors:commentshasErrors }= useSelector(commentsSelector) ;
+  const { id } = useParams();
+  console.log("comments=>",comments)
+
   useEffect(() => {
-    // const { id } = match.params;
-    // console.log('  match=> ', id )
+    
+    dispatch(fetchComments(id)) ;
     dispatch(fetchPost(id)) ;
-    // dispatch(fetchComments(id)) ;
+    console.log("comments=>",comments)
   }, [dispatch])
 
 
 
   const renderPost = () => {
-    console.log(hasErrors)
-    if (loading) return <p> Loading posts... </p>
-    if (hasErrors) return <p> Unable to display posts. </p>
+    if (postLoading) return <p> Loading posts... </p>
+    if (posthasErrors) return <p> Unable to display posts. </p>
     return <Post key={post.id} post={post} />
 
   }
 
-  // const renderComments = () => {
-  //   console.log("comments=>", comments)
-  //   if (loading.comments) return <p>Loading comments...</p>;
-  //   if (hasErrors.comments) return <p>Unable to display comments.</p>;
+  const renderComments = () => {
+    console.log("comments=>", comments)
+    if (commentsLoading) return <p>Loading comments...</p>;
+    if (commentshasErrors) return <p>Unable to display comments.</p>;
 
 
-  //   return comments.map((comment) => (
-  //     <Comment key={comment.id} comment={comment} />
-  //   ));
-  // };
+    return comments.map((comment) => (
+      <Comment key={comment.id} comment={comment} />
+    ));
+  };
 
 
   return (
     <section>
       <h1>Post</h1>
       {renderPost()}
-      {/* <h2>Comments</h2>
-      {renderComments()} */}
+      <h2>Comments</h2>
+      {renderComments()}
     </section>
   )
 }

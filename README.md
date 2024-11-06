@@ -1,1 +1,1 @@
-blog version posts only with plain redux and rtk
+blog version posts , post and comments  with plain redux and rtk
